@@ -44,6 +44,21 @@ Abrí http://localhost:8080. El envío real del formulario solo funciona en Netl
 3. En *Forms → Form notifications* agregá una notificación por email para recibir cada pedido.
 4. Hacé un envío de prueba desde el sitio publicado.
 
+## Aviso por email (Resend)
+
+Cada envío del formulario dispara la función `netlify/functions/aviso-presupuesto.mjs`, que manda el pedido por email usando [Resend](https://resend.com) (plan gratuito).
+
+1. Creá una cuenta en https://resend.com **con el email donde querés recibir los pedidos**.
+2. En Resend → *API Keys* → *Create API key* (permiso: *Sending access*). Copiala.
+3. En Netlify → *Project configuration → Environment variables* agregá:
+   - `RESEND_API_KEY` = la key de Resend (marcá *Contains secret values*; scope: *Functions*).
+   - `NOTIFY_EMAIL` = el mismo email con el que creaste la cuenta de Resend.
+4. Volvé a desplegar (*Deploys → Trigger deploy*) para que la función tome las variables.
+
+Sin dominio propio, Resend envía desde `onboarding@resend.dev` y **solo puede mandar al email de tu cuenta de Resend**. Cuando tengas dominio, verificalo en Resend y agregá `RESEND_FROM` (por ejemplo `Presupuestos <hola@tudominio.com.ar>`).
+
+Si un email no llega: revisá *Correo no deseado* y los logs en Netlify → *Logs → Functions → aviso-presupuesto*. El pedido igual queda guardado en *Forms*.
+
 ## Campos que recibís
 
 | Campo | Tipo | Obligatorio |
