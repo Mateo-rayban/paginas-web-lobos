@@ -1,0 +1,18 @@
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Netlify CLI
+.netlify/
+
+# Dependencias / logs (por si se usan herramientas locales)
+node_modules/
+*.log
+.env
+.env.*
