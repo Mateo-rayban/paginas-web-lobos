@@ -89,16 +89,22 @@ async function sendLeadEmail(data) {
     body: JSON.stringify(payload),
   });
 
+  const detail = await res.text();
   if (!res.ok) {
-    // Se lanza el error para que quede en los logs de la función.
-    throw new Error(`Resend respondió ${res.status}: ${await res.text()}`);
+    console.error(`Resend respondió ${res.status}: ${detail}`);
+    return;
   }
-  console.log("Aviso enviado a", to);
+  console.log("Aviso enviado a", to, detail);
 }
 
 export default {
   async formSubmitted(event) {
-    const data = event?.data || event?.payload?.data || {};
-    await sendLeadEmail(data);
+    try {
+      const data = event?.data || event?.payload?.data || {};
+      console.log("Pedido recibido, campos:", Object.keys(data).join(", "));
+      await sendLeadEmail(data);
+    } catch (err) {
+      console.error("Error al enviar el aviso:", err && err.stack ? err.stack : err);
+    }
   },
 };
