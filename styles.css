@@ -626,20 +626,20 @@ button, input, textarea, select { font: inherit; color: inherit; }
 .quote-form {
   margin-top: var(--s-6);
   display: grid;
-  gap: 0;
+  gap: var(--s-4);
 }
 .block {
   margin: 0;
   padding: var(--s-5) var(--s-4);
   background: var(--blanco);
-  border: 1px solid var(--borde);
-  border-radius: 0;
+  color: var(--verde);
+  border: 0;
+  border-radius: var(--radius-lg);
   min-width: 0;
+  box-shadow: 0 24px 48px -32px rgba(0, 0, 0, .55);
 }
-.block + .block { border-top: 0; }
-.block:first-of-type { border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
-.block:last-of-type { border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
 .form-error-summary { margin-bottom: var(--s-4); }
+
 .block__legend {
   display: flex;
   align-items: center;
@@ -955,46 +955,10 @@ fieldset.has-error .choice__box { border-color: var(--error); }
   text-align: right;
 }
 
-.block.is-locked { background: #FBFAF7; }
-.block.is-locked > *:not(legend):not(.block__lock) {
-  opacity: .35;
-  filter: grayscale(1);
-  pointer-events: none;
-  user-select: none;
-}
-.block.is-locked .block__legend { opacity: .55; }
-.block.is-locked .block__num { background: var(--gris); }
-.block__lock {
-  display: flex;
-  align-items: center;
-  gap: var(--s-2);
-  margin: 0 0 var(--s-4);
-  padding: 10px 14px;
-  border-radius: 12px;
-  background: var(--naranja-tinte);
-  color: var(--verde);
-  font-size: .9375rem;
-  font-weight: 500;
-  clear: both;
-}
-.block__lock svg {
-  width: 18px; height: 18px; flex-shrink: 0;
-  fill: none; stroke: var(--naranja-oscuro); stroke-width: 2; stroke-linecap: round;
-}
-.block > * { transition: opacity 450ms var(--ease), filter 450ms var(--ease); }
-.block.is-unlocked .block__num { animation: step-pop 520ms var(--ease); }
-@keyframes step-pop {
-  0% { transform: scale(.6); background: var(--naranja); }
-  60% { transform: scale(1.15); }
-  100% { transform: scale(1); }
-}
-
 .step-next { margin-top: var(--s-6); }
 .step-next[hidden] { display: none; }
 .step-next .btn { width: 100%; }
 
-.form-submit { transition: opacity 450ms var(--ease); }
-.form-submit.is-locked { opacity: .4; }
 
 @media (min-width: 640px) {
   .step-next .btn { width: auto; }
@@ -1049,3 +1013,128 @@ fieldset.has-error .choice__box { border-color: var(--error); }
 @media (prefers-reduced-motion: reduce) {
   .scrub-word { opacity: 1; }
 }
+
+
+/* =========================================================
+   Estética: combinación de colores, letras y detalles
+   ========================================================= */
+
+/* Subrayado naranja que se dibuja bajo "fácil de encontrar" */
+.mark {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 14' preserveAspectRatio='none'%3E%3Cpath d='M2 9.5C40 3 80 3.5 110 6.5S170 11 198 4' fill='none' stroke='%23D98B4A' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0 92%;
+  background-size: 100% .22em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding-bottom: .04em;
+}
+.motion .mark { background-size: 0% .22em; animation: mark-draw 900ms var(--ease) 350ms forwards; }
+@keyframes mark-draw { to { background-size: 100% .22em; } }
+
+/* Trama de puntos detrás del celular */
+.hero__visual::before {
+  content: "";
+  position: absolute;
+  inset: -16% -14% -12% 34%;
+  background-image: radial-gradient(rgba(31, 58, 52, .3) 1.5px, transparent 1.7px);
+  background-size: 16px 16px;
+  border-radius: 40px;
+  -webkit-mask-image: radial-gradient(closest-side, #000 45%, transparent);
+  mask-image: radial-gradient(closest-side, #000 45%, transparent);
+  pointer-events: none;
+}
+.finder { z-index: 1; }
+
+/* Franja de rubros: cursiva naranja + texto crema */
+.audience__text em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--naranja);
+  font-variation-settings: "opsz" 96, "SOFT" 50;
+}
+
+/* Abono mensual en verde: contraste con el pago único */
+.plan--monthly {
+  background: var(--verde);
+  color: var(--crema);
+}
+.plan--monthly .plan__text { color: rgba(246, 243, 238, .82); }
+.plan + .plan.plan--monthly { border-color: var(--verde); }
+.split__pct { font-style: italic; }
+
+/* Formulario sobre verde, con tarjetas blancas */
+.section--form {
+  background: var(--verde);
+  color: var(--crema);
+  position: relative;
+}
+.section--how + .section--form { padding-top: var(--s-8); }
+.section--form .section__lead { color: rgba(246, 243, 238, .78); }
+.section--form .form-progress__label { color: var(--crema); }
+.section--form .form-progress__bar span { background: rgba(246, 243, 238, .18); }
+.section--form .form-progress__bar span::after { background: var(--naranja); }
+.section--form .form-submit__note { color: rgba(246, 243, 238, .7); }
+.section--form .form-status.is-error { color: #F4C3B3; }
+
+/* Números de paso grandes, en cursiva naranja */
+.block__num {
+  width: auto; height: auto;
+  background: none;
+  color: var(--naranja-oscuro);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 2.5rem;
+  font-weight: 400;
+  line-height: .8;
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+  min-width: .7em;
+}
+.thanks__steps .block__num { font-size: 1.75rem; }
+
+/* El paso nuevo aparece abajo */
+.quote-form.is-stepped .is-pending { display: none; }
+.is-revealing { animation: step-in 650ms var(--ease) both; }
+@keyframes step-in {
+  from { opacity: 0; transform: translateY(28px) scale(.98); }
+  to { opacity: 1; transform: none; }
+}
+.step-next .btn--ghost { border-color: var(--verde); }
+
+/* Pie en verde, continúa al formulario */
+.site-footer {
+  background: var(--verde);
+  color: var(--crema);
+  border-top: 1px solid rgba(246, 243, 238, .12);
+  padding: var(--s-7) 0 var(--s-6);
+}
+.site-footer__call {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.75rem, 6vw, 2.5rem);
+  font-weight: 400;
+  line-height: 1.1;
+  color: var(--naranja);
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+}
+.site-footer__brand { margin-top: var(--s-2); }
+.site-footer .contact-chip { color: var(--verde); }
+.site-footer .contact-chip:hover { background: var(--naranja); border-color: var(--naranja); color: var(--verde); }
+.site-footer__small { color: rgba(246, 243, 238, .65); }
+
+/* Pista mientras falta contestar el paso 1 */
+.step-hint {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--s-2);
+  max-width: 30ch;
+  margin: 0 auto;
+  text-wrap: balance;
+  color: rgba(246, 243, 238, .78);
+  font-size: .9375rem;
+  text-align: center;
+}
+.step-hint svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; fill: none; stroke: var(--naranja); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.motion .step-hint svg { animation: hint-bob 1.6s var(--ease) 3; }
+@keyframes hint-bob { 50% { transform: translateY(4px); } }

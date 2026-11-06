@@ -160,16 +160,23 @@
     var audience = document.querySelector("[data-scrub]");
     var words = [];
     if (audience) {
-      var raw = audience.textContent.trim().split(/\s+/);
-      audience.setAttribute("aria-label", audience.textContent.trim());
+      var label = audience.textContent.replace(/\s+/g, " ").trim();
+      var parts = [];
+      audience.childNodes.forEach(function (node) {
+        var isEm = node.nodeType === 1 && node.tagName === "EM";
+        node.textContent.split(/(\s+)/).forEach(function (chunk) {
+          if (chunk) parts.push({ text: chunk, em: isEm });
+        });
+      });
+      audience.setAttribute("aria-label", label);
       audience.textContent = "";
-      raw.forEach(function (w, idx) {
-        var span = document.createElement("span");
+      parts.forEach(function (part) {
+        if (/^\s+$/.test(part.text)) { audience.appendChild(document.createTextNode(" ")); return; }
+        var span = document.createElement(part.em ? "em" : "span");
         span.className = "scrub-word";
         span.setAttribute("aria-hidden", "true");
-        span.textContent = w;
+        span.textContent = part.text;
         audience.appendChild(span);
-        if (idx < raw.length - 1) audience.appendChild(document.createTextNode(" "));
         words.push(span);
       });
     }
@@ -221,42 +228,42 @@
   var progressLabel = progressBox ? progressBox.querySelector(".form-progress__label") : null;
   var currentStep = 1;
 
-  function lockBlock(block) {
-    if (!block) return;
-    block.classList.add("is-locked");
-    block.setAttribute("inert", "");
-    block.setAttribute("aria-disabled", "true");
-    var msg = block.getAttribute("data-lock-msg");
-    if (msg && !block.querySelector(".block__lock")) {
-      var note = document.createElement("p");
-      note.className = "block__lock";
-      note.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg><span></span>';
-      note.querySelector("span").textContent = msg;
-      var legend = block.querySelector("legend");
-      legend.insertAdjacentElement("afterend", note);
+  function hideBlock(el) {
+    if (!el) return;
+    el.classList.add("is-pending");
+    el.setAttribute("inert", "");
+  }
+
+  function revealBlock(el) {
+    if (!el || !el.classList.contains("is-pending")) return;
+    el.classList.remove("is-pending");
+    el.removeAttribute("inert");
+    if (!prefersReducedMotion) {
+      el.classList.add("is-revealing");
+      el.addEventListener("animationend", function done() {
+        el.classList.remove("is-revealing");
+        el.removeEventListener("animationend", done);
+      });
     }
   }
 
-  function unlockBlock(block) {
-    if (!block || !block.classList.contains("is-locked")) return;
-    block.classList.remove("is-locked");
-    block.removeAttribute("inert");
-    block.removeAttribute("aria-disabled");
-    block.classList.add("is-unlocked");
-    var note = block.querySelector(".block__lock");
-    if (note) note.remove();
+  function bringIntoView(el) {
+    if (!el) return;
+    var top = el.getBoundingClientRect().top;
+    if (top > window.innerHeight * 0.7) {
+      window.scrollBy({ top: top - window.innerHeight * 0.3, behavior: prefersReducedMotion ? "auto" : "smooth" });
+    }
   }
 
   function setStep(n) {
     if (n <= currentStep) return;
     currentStep = n;
-    if (n >= 2) unlockBlock(stepBlocks[2]);
+    var hintEl = form.querySelector(".step-hint");
+    if (hintEl) hintEl.remove();
+    if (n >= 2) revealBlock(stepBlocks[2]);
     if (n >= 3) {
-      unlockBlock(stepBlocks[3]);
-      if (stepSubmit) {
-        stepSubmit.classList.remove("is-locked");
-        stepSubmit.removeAttribute("inert");
-      }
+      revealBlock(stepBlocks[3]);
+      revealBlock(stepSubmit);
       var next = form.querySelector(".step-next");
       if (next) next.hidden = true;
     }
@@ -268,9 +275,14 @@
 
   if (stepBlocks[1] && stepBlocks[2] && stepBlocks[3]) {
     if (progressBox) { progressBox.hidden = false; progressBox.setAttribute("data-current", "1"); }
-    lockBlock(stepBlocks[2]);
-    lockBlock(stepBlocks[3]);
-    if (stepSubmit) { stepSubmit.classList.add("is-locked"); stepSubmit.setAttribute("inert", ""); }
+    form.classList.add("is-stepped");
+    var hint = document.createElement("p");
+    hint.className = "step-hint";
+    hint.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg><span>Elegí una opción y aparece la siguiente pregunta.</span>';
+    stepBlocks[1].insertAdjacentElement("afterend", hint);
+    hideBlock(stepBlocks[2]);
+    hideBlock(stepBlocks[3]);
+    hideBlock(stepSubmit);
 
     // Botón para pasar al último paso sin contestar las preguntas opcionales.
     var nextWrap = document.createElement("div");
@@ -286,7 +298,11 @@
 
     form.addEventListener("change", function (e) {
       if (e.target.name === "rubro") setStep(2);
-      if (e.target.name === "modalidad") setStep(3);
+      if (e.target.name === "modalidad") {
+        var wasBefore = currentStep < 3;
+        setStep(3);
+        if (wasBefore) bringIntoView(stepBlocks[3]);
+      }
     });
 
     // Si el navegador recuerda respuestas (por ejemplo, al volver atrás), respetarlas.
