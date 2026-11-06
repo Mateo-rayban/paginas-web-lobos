@@ -14,27 +14,89 @@
   var yearEl = document.querySelector("[data-year]");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  /* ---------- Header con borde al hacer scroll ---------- */
-  var header = document.querySelector(".site-header");
-  if (header) {
-    var onScroll = function () {
-      header.classList.toggle("is-scrolled", window.scrollY > 8);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
+  /* ---------- Barra superior: se esconde al bajar y aparece al subir ---------- */
+  var header = document.querySelector("[data-header]");
+  var menuToggle = document.querySelector(".menu-toggle");
+  var mobileMenu = document.getElementById("menu-movil");
+
+  function isMenuOpen() { return !!mobileMenu && !mobileMenu.hidden; }
+
+  function setMenu(open) {
+    if (!mobileMenu || !menuToggle) return;
+    mobileMenu.hidden = !open;
+    menuToggle.setAttribute("aria-expanded", open ? "true" : "false");
+    menuToggle.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+    if (open && header) header.classList.remove("is-hidden");
   }
 
-  /* ---------- Scroll suave al formulario + foco accesible ---------- */
-  document.querySelectorAll('a[href="#presupuesto"]').forEach(function (link) {
+  if (header) {
+    var lastY = window.scrollY;
+    var ticking = false;
+    var update = function () {
+      var y = window.scrollY;
+      var delta = y - lastY;
+      header.classList.toggle("is-scrolled", y > 8);
+      if (y < 80 || isMenuOpen()) {
+        header.classList.remove("is-hidden");
+      } else if (delta > 6) {
+        header.classList.add("is-hidden");
+      } else if (delta < -6) {
+        header.classList.remove("is-hidden");
+      }
+      if (Math.abs(delta) > 6) lastY = y;
+      ticking = false;
+    };
+    window.addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; window.requestAnimationFrame(update); }
+    }, { passive: true });
+    // Si se navega con teclado, la barra vuelve a mostrarse.
+    header.addEventListener("focusin", function () { header.classList.remove("is-hidden"); });
+    update();
+  }
+
+  if (menuToggle) {
+    menuToggle.addEventListener("click", function () { setMenu(!isMenuOpen()); });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && isMenuOpen()) { setMenu(false); menuToggle.focus(); }
+    });
+    document.addEventListener("click", function (e) {
+      if (isMenuOpen() && header && !header.contains(e.target)) setMenu(false);
+    });
+  }
+
+  /* ---------- Scroll suave a cada sección + foco accesible ---------- */
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     link.addEventListener("click", function (e) {
-      var target = document.getElementById("presupuesto");
+      var id = link.getAttribute("href").slice(1);
+      var target = id && document.getElementById(id);
       if (!target) return;
       e.preventDefault();
+      setMenu(false);
       target.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+      if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
       target.focus({ preventScroll: true });
-      if (history.replaceState) history.replaceState(null, "", "#presupuesto");
+      if (history.replaceState) history.replaceState(null, "", "#" + id);
     });
   });
+
+  /* ---------- Marcar en el menú la sección que se está viendo ---------- */
+  var navLinks = document.querySelectorAll("[data-nav-link]");
+  if (navLinks.length && "IntersectionObserver" in window) {
+    var sectionIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var id = entry.target.id;
+        navLinks.forEach(function (a) {
+          if (a.getAttribute("href") === "#" + id) a.setAttribute("aria-current", "true");
+          else a.removeAttribute("aria-current");
+        });
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    ["inicio", "como-trabajo", "presupuesto", "contacto"].forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) sectionIO.observe(el);
+    });
+  }
 
   /* ---------- Aparición suave de bloques ---------- */
   if (!prefersReducedMotion && "IntersectionObserver" in window) {
