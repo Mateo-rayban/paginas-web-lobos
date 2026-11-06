@@ -77,7 +77,7 @@ Protección anti-spam: casilla oculta `botcheck` (si un bot la marca, el pedido 
 
 ## Pendiente cuando tengas marca y dominio
 
-- Agregar `<link rel="canonical">` y `og:url` con el dominio final.
+- Actualizar `<link rel="canonical">` y `og:url` si se cambia a un dominio propio (hoy apuntan a paginas-web-lobos.pages.dev).
 - Agregar una imagen `og:image` (1200×630) para cuando se comparta el link.
 - Agregar datos estructurados (`LocalBusiness` / `ProfessionalService`) con nombre y zona.
 - Reemplazar el favicon neutro.
