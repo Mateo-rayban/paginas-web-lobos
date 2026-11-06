@@ -47,7 +47,7 @@
         <a class="icon-link icon-link--ig" href="https://www.instagram.com/_mateadorno/" target="_blank" rel="noopener" aria-label="Instagram @_mateadorno">
           <svg aria-hidden="true" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle class="icon-dot" cx="17.2" cy="6.8" r="1.1"/></svg>
         </a>
-        <a class="site-header__cta" href="#presupuesto">Pedir presupuesto</a>
+        <a class="site-header__cta" href="#presupuesto" data-quote>Pedir presupuesto</a>
         <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu-movil" aria-label="Abrir menú">
           <span class="menu-toggle__bars" aria-hidden="true"></span>
         </button>
@@ -58,7 +58,7 @@
       <nav class="container" aria-label="Menú">
         <a href="#inicio" data-nav-link>Inicio</a>
         <a href="#como-trabajo" data-nav-link>Cómo trabajo</a>
-        <a href="#presupuesto" data-nav-link>Pedir presupuesto</a>
+        <a href="#presupuesto" data-nav-link data-quote>Pedir presupuesto</a>
         <a href="#contacto" data-nav-link>Contacto</a>
         <div class="mobile-menu__contact">
           <a class="contact-chip" href="https://wa.me/5492227534959" target="_blank" rel="noopener">
@@ -102,7 +102,7 @@
           </ul>
 
           <div class="hero__cta">
-            <a class="btn btn--primary btn--lg" href="#presupuesto">
+            <a class="btn btn--primary btn--lg" href="#presupuesto" data-quote>
               Quiero pedir un presupuesto
               <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
             </a>
@@ -329,6 +329,49 @@
       <p class="site-footer__small">© <span data-year>2026</span></p>
     </div>
   </footer>
+
+  <!-- Elegir cómo pedir el presupuesto (se abre desde los botones "Pedir presupuesto") -->
+  <dialog class="quote-dialog" id="elegir-contacto" aria-labelledby="quote-dialog-title">
+    <div class="quote-dialog__inner">
+      <button class="quote-dialog__close" type="button" data-dialog-close aria-label="Cerrar">
+        <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+      <h2 class="quote-dialog__title" id="quote-dialog-title">¿Cómo preferís pedir tu presupuesto?</h2>
+      <p class="quote-dialog__lead">Elegí lo que te quede más cómodo. Te respondo igual por cualquiera de los tres.</p>
+
+      <div class="quote-options">
+        <a class="quote-option quote-option--form" href="#presupuesto" data-choose-form>
+          <span class="quote-option__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4"/></svg>
+          </span>
+          <span class="quote-option__text">
+            <strong>Completar el formulario</strong>
+            <span>Son 2 minutos y te armo un presupuesto a medida.</span>
+          </span>
+        </a>
+
+        <a class="quote-option" href="https://wa.me/5492227534959?text=%C2%A1Hola!%20Quiero%20pedir%20un%20presupuesto%20para%20la%20p%C3%A1gina%20web%20de%20mi%20negocio." target="_blank" rel="noopener">
+          <span class="quote-option__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12Z"/><path class="icon-phone" transform="translate(7.3 7.3) scale(.4)" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </span>
+          <span class="quote-option__text">
+            <strong>Escribirme por WhatsApp</strong>
+            <span>02227 53-4959. El mensaje ya va escrito.</span>
+          </span>
+        </a>
+
+        <a class="quote-option" href="https://ig.me/m/_mateadorno" target="_blank" rel="noopener">
+          <span class="quote-option__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle class="icon-dot" cx="17.2" cy="6.8" r="1.1"/></svg>
+          </span>
+          <span class="quote-option__text">
+            <strong>Mandarme un mensaje por Instagram</strong>
+            <span>@_mateadorno</span>
+          </span>
+        </a>
+      </div>
+    </div>
+  </dialog>
 
   <script src="script.js" defer></script>
 </body>

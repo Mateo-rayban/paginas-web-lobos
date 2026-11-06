@@ -65,8 +65,13 @@
   }
 
   /* ---------- Scroll suave a cada sección + foco accesible ---------- */
+  var quoteDialog = document.getElementById("elegir-contacto");
+  var canDialog = !!(quoteDialog && typeof quoteDialog.showModal === "function");
+
   document.querySelectorAll('a[href^="#"]').forEach(function (link) {
     link.addEventListener("click", function (e) {
+      if (canDialog && link.hasAttribute("data-quote")) return; // lo maneja la ventanita
+      if (link.hasAttribute("data-choose-form")) return;
       var id = link.getAttribute("href").slice(1);
       var target = id && document.getElementById(id);
       if (!target) return;
@@ -78,6 +83,51 @@
       if (history.replaceState) history.replaceState(null, "", "#" + id);
     });
   });
+
+  /* ---------- "Pedir presupuesto": elegir formulario, WhatsApp o Instagram ----------
+     Sin soporte de <dialog> (o sin JS) los botones llevan directo al formulario. */
+  if (canDialog) {
+    var lastTrigger = null;
+
+    document.querySelectorAll("[data-quote]").forEach(function (btn) {
+      btn.addEventListener("click", function (e) {
+        e.preventDefault();
+        lastTrigger = btn;
+        setMenu(false);
+        quoteDialog.showModal();
+        var first = quoteDialog.querySelector(".quote-option");
+        if (first) first.focus();
+      });
+    });
+
+    var closeDialog = function () { if (quoteDialog.open) quoteDialog.close(); };
+
+    quoteDialog.querySelector("[data-dialog-close]").addEventListener("click", closeDialog);
+
+    // Tocar afuera de la tarjeta cierra la ventanita.
+    quoteDialog.addEventListener("click", function (e) {
+      if (e.target === quoteDialog) closeDialog();
+    });
+
+    // Al elegir WhatsApp o Instagram se abre la app y se cierra la ventanita.
+    quoteDialog.querySelectorAll('.quote-option[target="_blank"]').forEach(function (a) {
+      a.addEventListener("click", function () { setTimeout(closeDialog, 150); });
+    });
+
+    quoteDialog.querySelector("[data-choose-form]").addEventListener("click", function (e) {
+      e.preventDefault();
+      lastTrigger = null;
+      closeDialog();
+      var target = document.getElementById("presupuesto");
+      target.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+      target.focus({ preventScroll: true });
+      if (history.replaceState) history.replaceState(null, "", "#presupuesto");
+    });
+
+    quoteDialog.addEventListener("close", function () {
+      if (lastTrigger) lastTrigger.focus({ preventScroll: true });
+    });
+  }
 
   /* ---------- Marcar en el menú la sección que se está viendo ---------- */
   var navLinks = document.querySelectorAll("[data-nav-link]");

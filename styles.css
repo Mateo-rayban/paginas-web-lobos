@@ -1138,3 +1138,157 @@ fieldset.has-error .choice__box { border-color: var(--error); }
 .step-hint svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; fill: none; stroke: var(--naranja); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
 .motion .step-hint svg { animation: hint-bob 1.6s var(--ease) 3; }
 @keyframes hint-bob { 50% { transform: translateY(4px); } }
+
+/* =========================================================
+   Barra superior en verde
+   ========================================================= */
+.site-header {
+  background: rgba(31, 58, 52, .97);
+  color: var(--crema);
+  border-bottom-color: transparent;
+}
+.site-header.is-scrolled { border-bottom-color: rgba(246, 243, 238, .12); }
+.site-header.is-scrolled:not(.is-hidden) { box-shadow: 0 10px 28px -18px rgba(0, 0, 0, .6); }
+.site-header__label { color: var(--crema); }
+.site-nav a { color: rgba(246, 243, 238, .8); }
+.site-nav a:hover,
+.site-nav a[aria-current="true"] { color: var(--crema); }
+.icon-link { color: var(--crema); }
+.icon-link:hover { background: var(--crema); color: var(--verde); }
+.site-header__cta {
+  background: var(--naranja);
+  border-color: var(--naranja);
+  color: var(--verde);
+}
+.site-header__cta:hover { background: #E09659; border-color: #E09659; color: var(--verde); }
+.menu-toggle { border-color: rgba(246, 243, 238, .6); }
+.menu-toggle__bars,
+.menu-toggle__bars::before,
+.menu-toggle__bars::after { background: var(--crema); }
+.menu-toggle[aria-expanded="true"] .menu-toggle__bars { background: transparent; }
+.mobile-menu {
+  background: var(--verde);
+  border-top-color: rgba(246, 243, 238, .12);
+}
+.mobile-menu nav > a {
+  color: var(--crema);
+  border-bottom-color: rgba(246, 243, 238, .12);
+}
+.mobile-menu nav > a[aria-current="true"] { color: var(--naranja); }
+.mobile-menu .contact-chip { color: var(--verde); }
+.site-header :focus-visible { outline-color: var(--naranja); }
+
+/* =========================================================
+   Ventanita "¿Cómo preferís pedir tu presupuesto?"
+   ========================================================= */
+.quote-dialog {
+  width: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  margin: auto auto 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--verde);
+}
+.quote-dialog::backdrop {
+  background: rgba(20, 38, 34, .55);
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+}
+.quote-dialog__inner {
+  position: relative;
+  padding: var(--s-6) var(--s-4) calc(var(--s-5) + env(safe-area-inset-bottom));
+  background: var(--crema);
+  border-radius: 26px 26px 0 0;
+  box-shadow: 0 -20px 50px -20px rgba(0, 0, 0, .4);
+}
+.quote-dialog[open] .quote-dialog__inner { animation: sheet-up 360ms var(--ease); }
+.quote-dialog[open]::backdrop { animation: fade-in 260ms ease; }
+@keyframes sheet-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+
+.quote-dialog__close {
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--verde);
+  cursor: pointer;
+}
+.quote-dialog__close:hover { background: var(--verde-tinte); }
+.quote-dialog__close svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+
+.quote-dialog__title {
+  font-size: clamp(1.625rem, 6.5vw, 2.125rem);
+  font-weight: 400;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+  padding-right: 44px;
+  text-wrap: balance;
+}
+.quote-dialog__lead {
+  margin-top: var(--s-2);
+  color: var(--gris-texto);
+  font-size: .9375rem;
+}
+
+.quote-options {
+  display: grid;
+  gap: var(--s-2);
+  margin-top: var(--s-5);
+}
+.quote-option {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  min-height: 72px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--blanco);
+  border: 1.5px solid var(--borde);
+  text-decoration: none;
+  transition: border-color var(--t-fast), transform var(--t-fast) var(--ease), background var(--t-fast);
+}
+.quote-option:hover { border-color: var(--verde); }
+.quote-option:active { transform: scale(.985); }
+.quote-option__icon {
+  display: grid; place-items: center;
+  width: 46px; height: 46px; flex-shrink: 0;
+  border-radius: 14px;
+  background: var(--verde-tinte);
+  color: var(--verde);
+}
+.quote-option__icon svg {
+  width: 24px; height: 24px;
+  fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round;
+}
+.quote-option__text { display: grid; gap: 2px; }
+.quote-option__text strong { font-size: 1rem; font-weight: 600; }
+.quote-option__text span { font-size: .875rem; color: var(--gris-texto); }
+
+/* La opción del formulario va destacada */
+.quote-option--form {
+  background: var(--verde);
+  border-color: var(--verde);
+  color: var(--crema);
+}
+.quote-option--form:hover { border-color: var(--naranja); }
+.quote-option--form .quote-option__icon { background: var(--naranja); color: var(--verde); }
+.quote-option--form .quote-option__text span { color: rgba(246, 243, 238, .78); }
+
+@media (min-width: 640px) {
+  .quote-dialog {
+    max-width: 520px;
+    margin: auto;
+  }
+  .quote-dialog__inner {
+    border-radius: 26px;
+    padding: var(--s-7) var(--s-6) var(--s-6);
+    box-shadow: 0 30px 80px -30px rgba(0, 0, 0, .55);
+  }
+}
