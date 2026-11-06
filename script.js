@@ -1,12 +1,8 @@
 /* Landing · Páginas web · Lobos y alrededores
    JavaScript vanilla. La página funciona igual sin JS:
-   el formulario hace un POST nativo a Netlify y redirige a /gracias/. */
+   el formulario hace un POST nativo a Web3Forms. */
 (function () {
   "use strict";
-
-  // URL del webhook de n8n que manda el aviso por email (nodo Webhook, método POST).
-  // Si queda vacía, el formulario igual se guarda en Netlify Forms.
-  var N8N_WEBHOOK_URL = "";
 
   var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -66,7 +62,7 @@
 
   /* ---------- Scroll suave a cada sección + foco accesible ---------- */
   /* ---------- El formulario aparece recién al elegir "Completar el formulario" ----------
-     Sin JS se ve siempre (y Netlify lo detecta igual porque está en el HTML). */
+     Sin JS se ve siempre, así nadie queda sin poder pedir presupuesto. */
   var formSection = document.querySelector("[data-form-section]");
 
   function showFormSection() {
@@ -484,34 +480,55 @@
 
     setLoading(true);
 
-    // Netlify Forms acepta POST urlencoded a la raíz con el campo form-name.
-    var params = new URLSearchParams(new FormData(form));
-    var body = params.toString();
+    // Envío a Web3Forms: llega a tu email con los campos con nombres claros.
+    var LABELS = {
+      rubro: "Tipo de negocio",
+      negocio: "Nombre del negocio",
+      localidad: "Localidad",
+      "necesidades[]": "Qué necesita",
+      web_actual: "¿Tiene página web?",
+      modalidad: "Forma de pago",
+      nombre: "Nombre",
+      whatsapp: "WhatsApp",
+      email: "email",
+      mensaje: "Mensaje"
+    };
+    var data = new FormData(form);
 
-    // Aviso a n8n. sendBeacon no espera respuesta, no necesita CORS y sobrevive
-    // a la redirección a /gracias/. Si falla, el pedido igual queda en Netlify.
-    if (N8N_WEBHOOK_URL && params.get("bot-field") === "") {
-      try {
-        var sent = navigator.sendBeacon && navigator.sendBeacon(N8N_WEBHOOK_URL, params);
-        if (!sent) {
-          fetch(N8N_WEBHOOK_URL, { method: "POST", body: params, mode: "no-cors", keepalive: true }).catch(function () {});
-        }
-      } catch (err) { /* no bloquear el envío principal */ }
+    // Anti-spam: si un bot marcó la casilla oculta, se descarta sin avisarle.
+    if (data.get("botcheck")) { window.location.href = "/gracias/"; return; }
+
+    var payload = {
+      access_key: data.get("access_key"),
+      subject: data.get("subject"),
+      from_name: data.get("from_name")
+    };
+    Object.keys(LABELS).forEach(function (key) {
+      var values = data.getAll(key).map(function (v) { return String(v).trim(); }).filter(Boolean);
+      if (values.length) payload[LABELS[key]] = values.join(", ");
+    });
+
+    if (!payload.access_key || payload.access_key.indexOf("PEGAR") === 0) {
+      setLoading(false);
+      statusEl.classList.add("is-error");
+      statusEl.textContent = "El formulario todavía no tiene configurada la clave de envío.";
+      return;
     }
 
-    fetch("/", {
+    fetch(form.getAttribute("action"), {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: body
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(payload)
     })
-      .then(function (res) {
-        if (!res.ok) throw new Error("HTTP " + res.status);
-        window.location.href = form.getAttribute("action") || "/gracias/";
+      .then(function (res) { return res.json().catch(function () { return {}; }).then(function (json) { return { ok: res.ok, json: json }; }); })
+      .then(function (r) {
+        if (!r.ok || !r.json.success) throw new Error((r.json && r.json.message) || "Error al enviar");
+        window.location.href = "/gracias/";
       })
       .catch(function () {
         setLoading(false);
         statusEl.classList.add("is-error");
-        statusEl.textContent = "No se pudo enviar. Revisá tu conexión e intentá de nuevo.";
+        statusEl.textContent = "No se pudo enviar. Revisá tu conexión e intentá de nuevo, o escribime por WhatsApp.";
       });
   });
 })();

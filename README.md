@@ -3,7 +3,7 @@
 Landing page de captación de clientes para servicios de desarrollo web orientados a negocios locales (restaurantes, bares, panaderías, quintas de eventos, comercios y profesionales).
 
 - HTML5, CSS3 y JavaScript vanilla. Sin frameworks ni build.
-- Formulario procesado con **Netlify Forms** (nativo).
+- Formulario enviado con **Web3Forms** (llega por email).
 - Mobile-first, accesible (contraste AA, foco visible, etiquetas reales, `prefers-reduced-motion`).
 
 ## Estructura
@@ -25,39 +25,32 @@ Landing page de captación de clientes para servicios de desarrollo web orientad
 python3 -m http.server 8080
 ```
 
-Abrí http://localhost:8080. El envío real del formulario solo funciona en Netlify (en local el servidor no acepta POST).
+Abrí http://localhost:8080. El envío real del formulario necesita la clave de Web3Forms (ver abajo).
 
-## Desplegar en Netlify
+## Formulario: Web3Forms
 
-**Opción A: arrastrar y soltar**
-1. Entrá a https://app.netlify.com/drop.
-2. Arrastrá la carpeta del proyecto.
+Los pedidos se envían a [Web3Forms](https://web3forms.com) y llegan por email (plan gratis).
 
-**Opción B: desde un repositorio (recomendado)**
-1. Subí el proyecto a GitHub.
-2. En Netlify: *Add new site → Import an existing project* y elegí el repo.
-3. Build command: vacío. Publish directory: `/` (la raíz).
+1. Entrá a https://web3forms.com, poné tu email y tocá *Create Access Key*.
+2. Copiá la clave que te llega por email.
+3. En `index.html`, buscá `PEGAR-ACA-LA-ACCESS-KEY` y reemplazalo por tu clave.
 
-**Después del primer deploy**
-1. En *Site configuration → Forms*, activá la detección de formularios (*Enable form detection*) si no está activa y volvé a desplegar.
-2. Debería aparecer el formulario **presupuesto**.
-3. En *Forms → Form notifications* agregá una notificación por email para recibir cada pedido.
-4. Hacé un envío de prueba desde el sitio publicado.
+La clave no es secreta: está pensada para ir en el código de la página.
 
-## Aviso por email (Resend)
+## Publicar en Cloudflare Pages (gratis)
 
-Cada envío del formulario dispara la función `netlify/functions/aviso-presupuesto.mjs`, que manda el pedido por email usando [Resend](https://resend.com) (plan gratuito).
+1. Creá una cuenta en https://dash.cloudflare.com/sign-up
+2. *Workers & Pages → Create → Pages → Connect to Git* y conectá GitHub.
+3. Elegí el repo `paginas-web-lobos`.
+4. Configuración:
+   - Production branch: la rama con la versión final.
+   - Framework preset: *None*.
+   - Build command: vacío.
+   - Build output directory: `/`.
+5. *Save and Deploy*. Queda en `https://<nombre>.pages.dev`.
+6. Cada cambio que se suba a esa rama se publica solo.
 
-1. Creá una cuenta en https://resend.com **con el email donde querés recibir los pedidos**.
-2. En Resend → *API Keys* → *Create API key* (permiso: *Sending access*). Copiala.
-3. En Netlify → *Project configuration → Environment variables* agregá:
-   - `RESEND_API_KEY` = la key de Resend (marcá *Contains secret values*; scope: *Functions*).
-   - `NOTIFY_EMAIL` = el mismo email con el que creaste la cuenta de Resend.
-4. Volvé a desplegar (*Deploys → Trigger deploy*) para que la función tome las variables.
-
-Sin dominio propio, Resend envía desde `onboarding@resend.dev` y **solo puede mandar al email de tu cuenta de Resend**. Cuando tengas dominio, verificalo en Resend y agregá `RESEND_FROM` (por ejemplo `Presupuestos <hola@tudominio.com.ar>`).
-
-Si un email no llega: revisá *Correo no deseado* y los logs en Netlify → *Logs → Functions → aviso-presupuesto*. El pedido igual queda guardado en *Forms*.
+Dominio propio: en el proyecto, *Custom domains → Set up a custom domain*.
 
 ## Campos que recibís
 
@@ -74,13 +67,13 @@ Si un email no llega: revisá *Correo no deseado* y los logs en Netlify → *Log
 | `email` | Email | No |
 | `mensaje` | Comentario libre | No |
 
-Protección anti-spam: campo honeypot `bot-field`.
+Protección anti-spam: casilla oculta `botcheck` (si un bot la marca, el pedido se descarta).
 
 ## Personalizar
 
 - **Colores y tipografías:** variables al inicio de `styles.css`.
 - **Textos:** directamente en `index.html`.
-- **Agregar un campo:** sumalo en el `<form>` de `index.html`. Netlify lo detecta en el próximo deploy.
+- **Agregar un campo:** sumalo en el `<form>` de `index.html` y en `LABELS` de `script.js`.
 
 ## Pendiente cuando tengas marca y dominio
 

@@ -252,10 +252,13 @@
           <p class="section__lead">Son 2 minutos. Con esto te armo un presupuesto a medida y te escribo.</p>
         </div>
 
-        <form class="quote-form" name="presupuesto" method="POST" action="/gracias/" data-netlify="true" netlify-honeypot="bot-field" novalidate>
-          <input type="hidden" name="form-name" value="presupuesto">
+        <!-- Los pedidos se envían con Web3Forms (https://web3forms.com) y llegan por email.
+             Para cambiar la clave, reemplazá el value de access_key. -->
+        <form class="quote-form" name="presupuesto" method="POST" action="https://api.web3forms.com/submit" novalidate>
+          <input type="hidden" name="access_key" value="PEGAR-ACA-LA-ACCESS-KEY">
           <input type="hidden" name="subject" value="Nuevo pedido de presupuesto">
-          <p class="hidden" style="display:none;"><label>Don't fill this out if you're human: <input name="bot-field"></label></p>
+          <input type="hidden" name="from_name" value="Landing páginas web Lobos">
+          <input type="checkbox" name="botcheck" class="hidden" style="display:none;" tabindex="-1" autocomplete="off">
 
           <div class="form-progress" data-form-progress hidden>
             <div class="form-progress__bar" aria-hidden="true"><span></span><span></span><span></span></div>
