@@ -17,7 +17,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..600&family=Inter:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..700,0..100;1,9..144,300..700,0..100&family=Inter:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -73,8 +73,7 @@
     <section class="hero" id="inicio" aria-labelledby="hero-title">
       <div class="container hero__grid">
         <div class="hero__copy">
-          <p class="eyebrow">Para restaurantes, bares, panaderías, quintas de eventos, comercios y profesionales</p>
-          <h1 id="hero-title" class="hero__title">Tu negocio, <em>fácil de encontrar</em> en internet</h1>
+          <h1 id="hero-title" class="hero__title">Tu negocio, fácil de encontrar en internet</h1>
           <p class="hero__lead">Hago páginas web a medida, rápidas y modernas. Vos te ocupás de tu negocio; de lo técnico me encargo yo.</p>
 
           <ul class="tags" aria-label="Qué puede tener tu página">
@@ -96,65 +95,79 @@
             </li>
           </ul>
 
-          <a class="btn btn--primary btn--lg" href="#presupuesto" data-scroll>
-            Quiero pedir un presupuesto
-            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
-          </a>
-          <p class="hero__note">Sin compromiso. Te respondo por WhatsApp.</p>
-        </div>
-
-        <!-- Ilustración: maqueta genérica de una página de negocio local (decorativa) -->
-        <div class="hero__visual" aria-hidden="true">
-          <div class="mock">
-            <div class="mock__bar"><span></span><span></span><span></span><div class="mock__url">tunegocio.com.ar</div></div>
-            <div class="mock__body">
-              <div class="mock__hero">
-                <div class="mock__kicker">Abierto hoy · 8 a 21 h</div>
-                <div class="mock__title">Tu negocio</div>
-                <div class="mock__line"></div>
-                <div class="mock__line mock__line--short"></div>
-              </div>
-              <div class="mock__actions">
-                <div class="mock__btn mock__btn--solid">Ver menú</div>
-                <div class="mock__btn">Reservar</div>
-              </div>
-              <div class="mock__gallery"><span></span><span></span><span></span></div>
-              <div class="mock__wa">
-                <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12Z"/></svg>
-                Consultanos por WhatsApp
-              </div>
-            </div>
+          <div class="hero__cta">
+            <a class="btn btn--primary btn--lg" href="#presupuesto">
+              Quiero pedir un presupuesto
+              <svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+            </a>
+            <p class="hero__note">Sin compromiso. Te respondo por WhatsApp.</p>
           </div>
         </div>
+
+        <!-- Ilustración: alguien busca un negocio en el celular y aparece el tuyo primero (decorativa) -->
+        <div class="hero__visual" aria-hidden="true">
+          <div class="finder" data-finder>
+            <div class="finder__search">
+              <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-4.2-4.2"/></svg>
+              <span class="finder__query" data-query="panadería en Lobos">panadería en Lobos</span><span class="finder__caret"></span>
+            </div>
+
+            <article class="finder__result">
+              <div class="finder__thumb">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="finder__body">
+                <p class="finder__name">Tu negocio</p>
+                <p class="finder__url">tunegocio.com.ar</p>
+                <p class="finder__open"><span class="finder__dot"></span>Abierto ahora, cierra 21 h</p>
+              </div>
+              <div class="finder__actions">
+                <span>Ver menú</span>
+                <span>Reservar</span>
+                <span class="finder__wa">
+                  <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 0 1-11.8 7L4 20l1.1-4A8 8 0 1 1 20 12Z"/></svg>
+                  WhatsApp
+                </span>
+              </div>
+            </article>
+
+            <div class="finder__ghost"><span></span><span></span></div>
+            <div class="finder__ghost"><span></span><span></span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PARA QUIÉN -->
+    <section class="audience" aria-label="Para quién trabajo">
+      <div class="container">
+        <p class="audience__text">Para restaurantes, bares, panaderías, quintas de eventos, comercios y profesionales de Lobos y la zona.</p>
       </div>
     </section>
 
     <!-- CÓMO TRABAJO -->
     <section class="section section--how" id="como-trabajo" aria-labelledby="how-title">
       <div class="container">
-        <p class="eyebrow">Formas de pago</p>
-        <h2 id="how-title" class="section__title">Cómo trabajo</h2>
-        <p class="section__lead">Elegís la modalidad que mejor le quede a tu negocio. Sin letra chica.</p>
+        <div class="section__head">
+          <h2 id="how-title" class="section__title">Cómo trabajo</h2>
+          <p class="section__lead">Elegís la forma de pago que mejor le quede a tu negocio. Sin letra chica.</p>
+        </div>
 
         <div class="plans">
           <article class="plan">
-            <div class="plan__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17"/></svg>
-            </div>
-            <p class="plan__kicker">Opción 1</p>
             <h3 class="plan__title">Pago único</h3>
             <p class="plan__text">Dividimos el pago en dos partes: la mitad al comenzar y la otra mitad cuando tu página esté lista.</p>
-            <ol class="plan__steps">
-              <li><span>50%</span> al comenzar</li>
-              <li><span>50%</span> con la página lista</li>
-            </ol>
+            <div class="split" role="img" aria-label="El pago se divide en dos mitades: 50% al comenzar y 50% con la página lista">
+              <div class="split__half split__half--start"><span class="split__pct">50%</span></div>
+              <div class="split__half split__half--end"><span class="split__pct">50%</span></div>
+            </div>
+            <div class="split__labels" aria-hidden="true">
+              <span>Al comenzar</span>
+              <span>Con la página lista</span>
+            </div>
           </article>
 
-          <article class="plan plan--dark">
-            <div class="plan__icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v4h-4"/></svg>
-            </div>
-            <p class="plan__kicker">Opción 2</p>
+          <article class="plan plan--monthly">
             <h3 class="plan__title">Abono mensual</h3>
             <p class="plan__text">Tu página siempre online, dominio, cambios chicos y soporte incluidos.</p>
             <ul class="plan__list">
@@ -171,9 +184,10 @@
     <!-- FORMULARIO -->
     <section class="section section--form" id="presupuesto" aria-labelledby="form-title" tabindex="-1">
       <div class="container container--narrow">
-        <p class="eyebrow">Presupuesto sin compromiso</p>
-        <h2 id="form-title" class="section__title">Contame sobre tu negocio</h2>
-        <p class="section__lead">Son 2 minutos. Con esto te armo un presupuesto a medida y te escribo.</p>
+        <div class="section__head">
+          <h2 id="form-title" class="section__title">Contame sobre tu negocio</h2>
+          <p class="section__lead">Son 2 minutos. Con esto te armo un presupuesto a medida y te escribo.</p>
+        </div>
 
         <form class="quote-form" name="presupuesto" method="POST" action="/gracias/" data-netlify="true" netlify-honeypot="bot-field" novalidate>
           <input type="hidden" name="form-name" value="presupuesto">

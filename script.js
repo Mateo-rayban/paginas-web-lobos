@@ -98,21 +98,38 @@
     });
   }
 
-  /* ---------- Aparición suave de bloques ---------- */
-  if (!prefersReducedMotion && "IntersectionObserver" in window) {
-    var revealTargets = document.querySelectorAll(".plan, .block, .section__title, .hero__visual");
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("is-visible");
-          io.unobserve(entry.target);
-        }
-      });
-    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.08 });
-    revealTargets.forEach(function (el) {
-      el.classList.add("reveal");
-      io.observe(el);
-    });
+  /* ---------- Inicio: se escribe la búsqueda y aparece tu negocio ----------
+     Es la única animación automática de la página. Sin JS o con movimiento
+     reducido se ve directamente el resultado final. */
+  var finder = document.querySelector("[data-finder]");
+  if (finder && !prefersReducedMotion) {
+    var queryEl = finder.querySelector(".finder__query");
+    var text = queryEl ? queryEl.getAttribute("data-query") || queryEl.textContent : "";
+    var stepMs = 65;
+    if (queryEl && text) {
+      queryEl.textContent = "";
+      finder.style.setProperty("--result-delay", (300 + text.length * stepMs + 250) + "ms");
+      finder.classList.add("is-waiting");
+      var start = function () {
+        finder.classList.remove("is-waiting");
+        finder.classList.add("is-animating");
+        var i = 0;
+        setTimeout(function typeNext() {
+          i += 1;
+          queryEl.textContent = text.slice(0, i);
+          if (i < text.length) setTimeout(typeNext, stepMs);
+        }, 300);
+      };
+      // Arranca recién cuando el celular se ve en pantalla (en móvil queda más abajo).
+      if ("IntersectionObserver" in window) {
+        var finderIO = new IntersectionObserver(function (entries) {
+          if (entries[0].isIntersecting) { finderIO.disconnect(); start(); }
+        }, { threshold: 0.45 });
+        finderIO.observe(finder);
+      } else {
+        start();
+      }
+    }
   }
 
   /* ---------- Formulario ---------- */
