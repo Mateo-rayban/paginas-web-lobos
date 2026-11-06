@@ -4,6 +4,10 @@
 (function () {
   "use strict";
 
+  // URL del webhook de n8n que manda el aviso por email (nodo Webhook, método POST).
+  // Si queda vacía, el formulario igual se guarda en Netlify Forms.
+  var N8N_WEBHOOK_URL = "";
+
   var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   /* ---------- Año del footer ---------- */
@@ -151,7 +155,19 @@
     setLoading(true);
 
     // Netlify Forms acepta POST urlencoded a la raíz con el campo form-name.
-    var body = new URLSearchParams(new FormData(form)).toString();
+    var params = new URLSearchParams(new FormData(form));
+    var body = params.toString();
+
+    // Aviso a n8n. sendBeacon no espera respuesta, no necesita CORS y sobrevive
+    // a la redirección a /gracias/. Si falla, el pedido igual queda en Netlify.
+    if (N8N_WEBHOOK_URL && params.get("bot-field") === "") {
+      try {
+        var sent = navigator.sendBeacon && navigator.sendBeacon(N8N_WEBHOOK_URL, params);
+        if (!sent) {
+          fetch(N8N_WEBHOOK_URL, { method: "POST", body: params, mode: "no-cors", keepalive: true }).catch(function () {});
+        }
+      } catch (err) { /* no bloquear el envío principal */ }
+    }
 
     fetch("/", {
       method: "POST",

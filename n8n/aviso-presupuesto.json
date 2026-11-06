@@ -1,0 +1,44 @@
+{
+  "name": "Aviso de presupuesto (landing)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "presupuesto-lobos",
+        "responseMode": "onReceived",
+        "options": {
+          "allowedOrigins": "https://paginas-web-lobos.netlify.app"
+        }
+      },
+      "id": "a1f0c6b2-1111-4c1a-9d1e-000000000001",
+      "name": "Pedido desde la landing",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0],
+      "webhookId": "presupuesto-lobos"
+    },
+    {
+      "parameters": {
+        "sendTo": "mateoadorno1@hotmail.com",
+        "subject": "=Nuevo pedido de presupuesto: {{ $json.body.nombre || 'Sin nombre' }}{{ $json.body.rubro ? ' (' + $json.body.rubro + ')' : '' }}",
+        "emailType": "html",
+        "message": "=<div style=\"font-family:Arial,sans-serif;color:#1F3A34;max-width:560px\">\n<h2>Nuevo pedido de presupuesto</h2>\n<p><b>Nombre:</b> {{ $json.body.nombre }}</p>\n<p><b>WhatsApp:</b> {{ $json.body.whatsapp }}</p>\n<p><b>Email:</b> {{ $json.body.email || '-' }}</p>\n<p><b>Tipo de negocio:</b> {{ $json.body.rubro }}</p>\n<p><b>Nombre del negocio:</b> {{ $json.body.negocio || '-' }}</p>\n<p><b>Localidad:</b> {{ $json.body.localidad || '-' }}</p>\n<p><b>Qué necesita:</b> {{ [].concat($json.body['necesidades[]'] ?? $json.body.necesidades ?? []).join(', ') || '-' }}</p>\n<p><b>¿Tiene página web?:</b> {{ $json.body.web_actual || '-' }}</p>\n<p><b>Forma de pago:</b> {{ $json.body.modalidad || '-' }}</p>\n<p><b>Mensaje:</b> {{ $json.body.mensaje || '-' }}</p>\n<hr><p style=\"color:#5C5C5C;font-size:13px\">También queda guardado en Netlify → Forms.</p>\n</div>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "a1f0c6b2-2222-4c1a-9d1e-000000000002",
+      "name": "Mandarme el email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [260, 0]
+    }
+  ],
+  "connections": {
+    "Pedido desde la landing": {
+      "main": [[{ "node": "Mandarme el email", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "pinData": {}
+}
