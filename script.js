@@ -65,6 +65,27 @@
   }
 
   /* ---------- Scroll suave a cada sección + foco accesible ---------- */
+  /* ---------- El formulario aparece recién al elegir "Completar el formulario" ----------
+     Sin JS se ve siempre (y Netlify lo detecta igual porque está en el HTML). */
+  var formSection = document.querySelector("[data-form-section]");
+
+  function showFormSection() {
+    if (!formSection || !formSection.hidden) return;
+    formSection.hidden = false;
+    if (!prefersReducedMotion) {
+      formSection.classList.add("is-revealing");
+      formSection.addEventListener("animationend", function done() {
+        formSection.classList.remove("is-revealing");
+        formSection.removeEventListener("animationend", done);
+      });
+    }
+  }
+
+  if (formSection && location.hash !== "#presupuesto") formSection.hidden = true;
+  window.addEventListener("hashchange", function () {
+    if (location.hash === "#presupuesto") showFormSection();
+  });
+
   var quoteDialog = document.getElementById("elegir-contacto");
   var canDialog = !!(quoteDialog && typeof quoteDialog.showModal === "function");
 
@@ -73,6 +94,7 @@
       if (canDialog && link.hasAttribute("data-quote")) return; // lo maneja la ventanita
       if (link.hasAttribute("data-choose-form")) return;
       var id = link.getAttribute("href").slice(1);
+      if (id === "presupuesto") showFormSection();
       var target = id && document.getElementById(id);
       if (!target) return;
       e.preventDefault();
@@ -118,6 +140,7 @@
       e.preventDefault();
       lastTrigger = null;
       closeDialog();
+      showFormSection();
       var target = document.getElementById("presupuesto");
       target.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
       target.focus({ preventScroll: true });
@@ -142,7 +165,7 @@
         });
       });
     }, { rootMargin: "-45% 0px -50% 0px" });
-    ["inicio", "como-trabajo", "presupuesto", "contacto"].forEach(function (id) {
+    ["inicio", "como-trabajo", "paso-a-paso", "contacto"].forEach(function (id) {
       var el = document.getElementById(id);
       if (el) sectionIO.observe(el);
     });
@@ -231,6 +254,9 @@
       });
     }
 
+    // La línea que une los pasos se va llenando a medida que bajás.
+    var stepsList = document.querySelector("[data-steps]");
+
     // 3) El celular del inicio se mueve más lento que la página (parallax suave).
     var visual = document.querySelector(".hero__visual");
 
@@ -247,6 +273,11 @@
         progress = Math.max(0, Math.min(1, progress));
         var lit = Math.round(progress * words.length);
         for (var k = 0; k < words.length; k++) words[k].classList.toggle("is-lit", k < lit);
+      }
+      if (stepsList) {
+        var sr = stepsList.getBoundingClientRect();
+        var sp = (vh * 0.6 - sr.top) / sr.height;
+        stepsList.style.setProperty("--progress", Math.max(0, Math.min(1, sp)).toFixed(3));
       }
       scrollTicking = false;
     };

@@ -36,7 +36,7 @@
       <nav class="site-nav" aria-label="Secciones de la página">
         <a href="#inicio" data-nav-link>Inicio</a>
         <a href="#como-trabajo" data-nav-link>Cómo trabajo</a>
-        <a href="#presupuesto" data-nav-link>Presupuesto</a>
+        <a href="#paso-a-paso" data-nav-link>Paso a paso</a>
         <a href="#contacto" data-nav-link>Contacto</a>
       </nav>
 
@@ -58,7 +58,8 @@
       <nav class="container" aria-label="Menú">
         <a href="#inicio" data-nav-link>Inicio</a>
         <a href="#como-trabajo" data-nav-link>Cómo trabajo</a>
-        <a href="#presupuesto" data-nav-link data-quote>Pedir presupuesto</a>
+        <a href="#paso-a-paso" data-nav-link>Paso a paso</a>
+        <a href="#presupuesto" data-quote>Pedir presupuesto</a>
         <a href="#contacto" data-nav-link>Contacto</a>
         <div class="mobile-menu__contact">
           <a class="contact-chip" href="https://wa.me/5492227534959" target="_blank" rel="noopener">
@@ -187,8 +188,64 @@
       </div>
     </section>
 
-    <!-- FORMULARIO -->
-    <section class="section section--form" id="presupuesto" aria-labelledby="form-title" tabindex="-1">
+    <!-- PASO A PASO -->
+    <section class="section section--process" id="paso-a-paso" aria-labelledby="process-title">
+      <div class="container process">
+        <div class="process__intro">
+          <h2 id="process-title" class="section__title" data-in>Cómo armamos tu página, paso a paso</h2>
+          <p class="section__lead">Sin vueltas técnicas: vos me contás qué necesitás y yo me encargo del resto. Así es el camino desde la primera charla hasta tu página online.</p>
+          <a class="btn btn--primary btn--lg process__cta" href="#presupuesto" data-quote>Quiero pedir un presupuesto</a>
+        </div>
+
+        <ol class="steps" data-steps>
+          <li class="step" data-in>
+            <span class="step__num" aria-hidden="true">1</span>
+            <div>
+              <h3 class="step__title">Charlamos</h3>
+              <p>Me contás sobre tu negocio por el formulario, WhatsApp o Instagram. Con eso te paso un presupuesto a medida.</p>
+            </div>
+          </li>
+          <li class="step" data-in>
+            <span class="step__num" aria-hidden="true">2</span>
+            <div>
+              <h3 class="step__title">Arrancamos</h3>
+              <p>Elegís la forma de pago y me mandás lo que tengas: fotos, textos, logo, menú o lista de precios. Si elegiste pago único, abonás la mitad al comenzar.</p>
+            </div>
+          </li>
+          <li class="step" data-in>
+            <span class="step__num" aria-hidden="true">3</span>
+            <div>
+              <h3 class="step__title">Diseño tu página</h3>
+              <p>Armo una primera versión con la identidad de tu negocio y te la muestro desde el celular para que la veas como la van a ver tus clientes.</p>
+            </div>
+          </li>
+          <li class="step" data-in>
+            <span class="step__num" aria-hidden="true">4</span>
+            <div>
+              <h3 class="step__title">Ajustamos</h3>
+              <p>Me decís qué cambiarías: textos, fotos, colores o secciones. Lo corregimos juntos hasta que quede como querés.</p>
+            </div>
+          </li>
+          <li class="step" data-in>
+            <span class="step__num" aria-hidden="true">5</span>
+            <div>
+              <h3 class="step__title">La publicamos</h3>
+              <p>Tu página queda online, lista para compartir en tus redes, en WhatsApp y en Google. Si elegiste pago único, ahí se abona la otra mitad.</p>
+            </div>
+          </li>
+          <li class="step" data-in>
+            <span class="step__num" aria-hidden="true">6</span>
+            <div>
+              <h3 class="step__title">Te acompaño después</h3>
+              <p>Con el abono mensual me encargo de que siga online, del dominio, de los cambios chicos y del soporte.</p>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- FORMULARIO (con JS queda oculto hasta elegir "Completar el formulario") -->
+    <section class="section section--form" id="presupuesto" aria-labelledby="form-title" tabindex="-1" data-form-section>
       <div class="container container--narrow">
         <div class="section__head">
           <h2 id="form-title" class="section__title" data-in>Contame sobre tu negocio</h2>
