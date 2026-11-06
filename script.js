@@ -122,14 +122,82 @@
       };
       // Arranca recién cuando el celular se ve en pantalla (en móvil queda más abajo).
       if ("IntersectionObserver" in window) {
+        // También arranca si se pasó de largo bajando rápido (quedó arriba de la pantalla).
         var finderIO = new IntersectionObserver(function (entries) {
-          if (entries[0].isIntersecting) { finderIO.disconnect(); start(); }
-        }, { threshold: 0.45 });
+          var e = entries[0];
+          if (e.intersectionRatio >= 0.45 || e.boundingClientRect.top < 0) { finderIO.disconnect(); start(); }
+        }, { threshold: [0, 0.45, 1] });
         finderIO.observe(finder);
       } else {
         start();
       }
     }
+  }
+
+  /* ---------- Efectos al bajar ----------
+     Solo si el sistema no pide movimiento reducido (clase "motion" en <html>,
+     que se pone en el <head> antes de pintar). */
+  var motionOn = document.documentElement.classList.contains("motion");
+
+  if (motionOn) {
+    // 1) Elementos que entran una sola vez al aparecer en pantalla.
+    var inTargets = document.querySelectorAll("[data-in]");
+    if ("IntersectionObserver" in window) {
+      var inIO = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-in");
+            inIO.unobserve(entry.target);
+          }
+        });
+      }, { rootMargin: "0px 0px -12% 0px", threshold: 0.15 });
+      inTargets.forEach(function (el) { inIO.observe(el); });
+    } else {
+      inTargets.forEach(function (el) { el.classList.add("is-in"); });
+    }
+
+    // 2) Franja de rubros: las palabras se encienden a medida que bajás.
+    var audience = document.querySelector("[data-scrub]");
+    var words = [];
+    if (audience) {
+      var raw = audience.textContent.trim().split(/\s+/);
+      audience.setAttribute("aria-label", audience.textContent.trim());
+      audience.textContent = "";
+      raw.forEach(function (w, idx) {
+        var span = document.createElement("span");
+        span.className = "scrub-word";
+        span.setAttribute("aria-hidden", "true");
+        span.textContent = w;
+        audience.appendChild(span);
+        if (idx < raw.length - 1) audience.appendChild(document.createTextNode(" "));
+        words.push(span);
+      });
+    }
+
+    // 3) El celular del inicio se mueve más lento que la página (parallax suave).
+    var visual = document.querySelector(".hero__visual");
+
+    var scrollTicking = false;
+    var onMotionScroll = function () {
+      var vh = window.innerHeight;
+      if (visual) {
+        var y = Math.min(window.scrollY, vh * 1.2);
+        visual.style.transform = "translate3d(0," + (y * -0.12).toFixed(1) + "px,0)";
+      }
+      if (audience && words.length) {
+        var r = audience.getBoundingClientRect();
+        var progress = (vh * 0.9 - r.top) / (vh * 0.55 + r.height);
+        progress = Math.max(0, Math.min(1, progress));
+        var lit = Math.round(progress * words.length);
+        for (var k = 0; k < words.length; k++) words[k].classList.toggle("is-lit", k < lit);
+      }
+      scrollTicking = false;
+    };
+    window.addEventListener("scroll", function () {
+      if (!scrollTicking) { scrollTicking = true; window.requestAnimationFrame(onMotionScroll); }
+    }, { passive: true });
+    window.addEventListener("resize", onMotionScroll);
+    onMotionScroll();
   }
 
   /* ---------- Formulario ---------- */
@@ -139,6 +207,92 @@
   var submitBtn = form.querySelector('button[type="submit"]');
   var statusEl = form.querySelector(".form-status");
   var summaryEl = form.querySelector(".form-error-summary");
+
+  /* ---------- Formulario por pasos ----------
+     Sin JS se ve todo habilitado. Con JS, los pasos 2 y 3 arrancan bloqueados
+     y se van habilitando a medida que se contesta. */
+  var stepBlocks = {
+    1: form.querySelector('[data-step="1"]'),
+    2: form.querySelector('[data-step="2"]'),
+    3: form.querySelector('[data-step="3"]')
+  };
+  var stepSubmit = form.querySelector("[data-step-submit]");
+  var progressBox = form.querySelector("[data-form-progress]");
+  var progressLabel = progressBox ? progressBox.querySelector(".form-progress__label") : null;
+  var currentStep = 1;
+
+  function lockBlock(block) {
+    if (!block) return;
+    block.classList.add("is-locked");
+    block.setAttribute("inert", "");
+    block.setAttribute("aria-disabled", "true");
+    var msg = block.getAttribute("data-lock-msg");
+    if (msg && !block.querySelector(".block__lock")) {
+      var note = document.createElement("p");
+      note.className = "block__lock";
+      note.innerHTML = '<svg aria-hidden="true" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg><span></span>';
+      note.querySelector("span").textContent = msg;
+      var legend = block.querySelector("legend");
+      legend.insertAdjacentElement("afterend", note);
+    }
+  }
+
+  function unlockBlock(block) {
+    if (!block || !block.classList.contains("is-locked")) return;
+    block.classList.remove("is-locked");
+    block.removeAttribute("inert");
+    block.removeAttribute("aria-disabled");
+    block.classList.add("is-unlocked");
+    var note = block.querySelector(".block__lock");
+    if (note) note.remove();
+  }
+
+  function setStep(n) {
+    if (n <= currentStep) return;
+    currentStep = n;
+    if (n >= 2) unlockBlock(stepBlocks[2]);
+    if (n >= 3) {
+      unlockBlock(stepBlocks[3]);
+      if (stepSubmit) {
+        stepSubmit.classList.remove("is-locked");
+        stepSubmit.removeAttribute("inert");
+      }
+      var next = form.querySelector(".step-next");
+      if (next) next.hidden = true;
+    }
+    if (progressBox) {
+      progressBox.setAttribute("data-current", String(n));
+      if (progressLabel) progressLabel.textContent = "Paso " + n + " de 3";
+    }
+  }
+
+  if (stepBlocks[1] && stepBlocks[2] && stepBlocks[3]) {
+    if (progressBox) { progressBox.hidden = false; progressBox.setAttribute("data-current", "1"); }
+    lockBlock(stepBlocks[2]);
+    lockBlock(stepBlocks[3]);
+    if (stepSubmit) { stepSubmit.classList.add("is-locked"); stepSubmit.setAttribute("inert", ""); }
+
+    // Botón para pasar al último paso sin contestar las preguntas opcionales.
+    var nextWrap = document.createElement("div");
+    nextWrap.className = "step-next";
+    nextWrap.innerHTML = '<button type="button" class="btn btn--ghost">Seguir al último paso</button>';
+    stepBlocks[2].appendChild(nextWrap);
+    nextWrap.querySelector("button").addEventListener("click", function () {
+      setStep(3);
+      stepBlocks[3].scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+      var nombre = form.elements.nombre;
+      if (nombre) setTimeout(function () { nombre.focus({ preventScroll: true }); }, prefersReducedMotion ? 0 : 450);
+    });
+
+    form.addEventListener("change", function (e) {
+      if (e.target.name === "rubro") setStep(2);
+      if (e.target.name === "modalidad") setStep(3);
+    });
+
+    // Si el navegador recuerda respuestas (por ejemplo, al volver atrás), respetarlas.
+    if (form.querySelector('input[name="rubro"]:checked')) setStep(2);
+    if (form.querySelector('input[name="modalidad"]:checked')) setStep(3);
+  }
 
   function digitsOnly(value) { return (value || "").replace(/\D/g, ""); }
 

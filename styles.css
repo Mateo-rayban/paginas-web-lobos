@@ -910,3 +910,142 @@ fieldset.has-error .choice__box { border-color: var(--error); }
     transition-duration: .01ms !important;
   }
 }
+
+/* =========================================================
+   Formulario por pasos
+   ========================================================= */
+.form-progress {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-4);
+}
+.form-progress[hidden] { display: none; }
+.form-progress__bar {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.form-progress__bar span {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--borde);
+  position: relative;
+  overflow: hidden;
+}
+.form-progress__bar span::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--verde);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 500ms var(--ease);
+}
+.form-progress[data-current="1"] .form-progress__bar span:nth-child(1)::after,
+.form-progress[data-current="2"] .form-progress__bar span:nth-child(-n+2)::after,
+.form-progress[data-current="3"] .form-progress__bar span::after { transform: scaleX(1); }
+.form-progress__label {
+  font-size: .875rem;
+  font-weight: 600;
+  color: var(--verde-90);
+  white-space: nowrap;
+  min-width: 6.5em;
+  text-align: right;
+}
+
+.block.is-locked { background: #FBFAF7; }
+.block.is-locked > *:not(legend):not(.block__lock) {
+  opacity: .35;
+  filter: grayscale(1);
+  pointer-events: none;
+  user-select: none;
+}
+.block.is-locked .block__legend { opacity: .55; }
+.block.is-locked .block__num { background: var(--gris); }
+.block__lock {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  margin: 0 0 var(--s-4);
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--naranja-tinte);
+  color: var(--verde);
+  font-size: .9375rem;
+  font-weight: 500;
+  clear: both;
+}
+.block__lock svg {
+  width: 18px; height: 18px; flex-shrink: 0;
+  fill: none; stroke: var(--naranja-oscuro); stroke-width: 2; stroke-linecap: round;
+}
+.block > * { transition: opacity 450ms var(--ease), filter 450ms var(--ease); }
+.block.is-unlocked .block__num { animation: step-pop 520ms var(--ease); }
+@keyframes step-pop {
+  0% { transform: scale(.6); background: var(--naranja); }
+  60% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.step-next { margin-top: var(--s-6); }
+.step-next[hidden] { display: none; }
+.step-next .btn { width: 100%; }
+
+.form-submit { transition: opacity 450ms var(--ease); }
+.form-submit.is-locked { opacity: .4; }
+
+@media (min-width: 640px) {
+  .step-next .btn { width: auto; }
+}
+
+/* =========================================================
+   Efectos al bajar (solo con html.motion)
+   ========================================================= */
+.motion [data-in].section__title {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 700ms var(--ease), transform 700ms var(--ease);
+}
+.motion [data-in].section__title.is-in { opacity: 1; transform: none; }
+
+/* Panel de formas de pago: entra entero, una sola vez */
+.motion .plans[data-in] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 700ms var(--ease) 120ms, transform 700ms var(--ease) 120ms;
+}
+.motion .plans[data-in].is-in { opacity: 1; transform: none; }
+
+/* La barra del pago se llena en dos tiempos: primero la mitad inicial, después la final */
+.motion .split[data-in] .split__half {
+  clip-path: inset(0 100% 0 0 round 14px);
+  transition: clip-path 800ms var(--ease);
+}
+.motion .split[data-in] .split__half--end { transition-delay: 700ms; }
+.motion .split[data-in].is-in .split__half { clip-path: inset(0 0 0 0 round 0); }
+
+/* Lo que incluye el abono aparece uno por uno */
+.motion .plan__list[data-in] li {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 450ms var(--ease), transform 450ms var(--ease);
+}
+.motion .plan__list[data-in].is-in li { opacity: 1; transform: none; }
+.motion .plan__list[data-in].is-in li:nth-child(2) { transition-delay: 120ms; }
+.motion .plan__list[data-in].is-in li:nth-child(3) { transition-delay: 240ms; }
+.motion .plan__list[data-in].is-in li:nth-child(4) { transition-delay: 360ms; }
+
+/* Rubros que se encienden palabra por palabra */
+.scrub-word {
+  opacity: .28;
+  transition: opacity 260ms linear;
+}
+.scrub-word.is-lit { opacity: 1; }
+
+.motion .hero__visual { will-change: transform; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scrub-word { opacity: 1; }
+}
