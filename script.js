@@ -1,4 +1,4 @@
-/* Landing · Páginas web · Lobos y alrededores
+/* Laguna De Webs · Páginas web en Lobos y alrededores
    JavaScript vanilla. La página funciona igual sin JS:
    el formulario hace un POST nativo a Web3Forms. */
 (function () {
