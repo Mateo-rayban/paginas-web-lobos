@@ -161,46 +161,10 @@
         });
       });
     }, { rootMargin: "-45% 0px -50% 0px" });
-    ["inicio", "como-trabajo", "paso-a-paso", "contacto"].forEach(function (id) {
+    ["servicios", "ejemplos", "paso-a-paso", "como-trabajo", "preguntas", "contacto"].forEach(function (id) {
       var el = document.getElementById(id);
       if (el) sectionIO.observe(el);
     });
-  }
-
-  /* ---------- Inicio: se escribe la búsqueda y aparece tu negocio ----------
-     Es la única animación automática de la página. Sin JS o con movimiento
-     reducido se ve directamente el resultado final. */
-  var finder = document.querySelector("[data-finder]");
-  if (finder && !prefersReducedMotion) {
-    var queryEl = finder.querySelector(".finder__query");
-    var text = queryEl ? queryEl.getAttribute("data-query") || queryEl.textContent : "";
-    var stepMs = 65;
-    if (queryEl && text) {
-      queryEl.textContent = "";
-      finder.style.setProperty("--result-delay", (300 + text.length * stepMs + 250) + "ms");
-      finder.classList.add("is-waiting");
-      var start = function () {
-        finder.classList.remove("is-waiting");
-        finder.classList.add("is-animating");
-        var i = 0;
-        setTimeout(function typeNext() {
-          i += 1;
-          queryEl.textContent = text.slice(0, i);
-          if (i < text.length) setTimeout(typeNext, stepMs);
-        }, 300);
-      };
-      // Arranca recién cuando el celular se ve en pantalla (en móvil queda más abajo).
-      if ("IntersectionObserver" in window) {
-        // También arranca si se pasó de largo bajando rápido (quedó arriba de la pantalla).
-        var finderIO = new IntersectionObserver(function (entries) {
-          var e = entries[0];
-          if (e.intersectionRatio >= 0.45 || e.boundingClientRect.top < 0) { finderIO.disconnect(); start(); }
-        }, { threshold: [0, 0.45, 1] });
-        finderIO.observe(finder);
-      } else {
-        start();
-      }
-    }
   }
 
   /* ---------- Efectos al bajar ----------
@@ -225,54 +189,15 @@
       inTargets.forEach(function (el) { el.classList.add("is-in"); });
     }
 
-    // 2) Franja de rubros: las palabras se encienden a medida que bajás.
-    var audience = document.querySelector("[data-scrub]");
-    var words = [];
-    if (audience) {
-      var label = audience.textContent.replace(/\s+/g, " ").trim();
-      var parts = [];
-      audience.childNodes.forEach(function (node) {
-        var isEm = node.nodeType === 1 && node.tagName === "EM";
-        node.textContent.split(/(\s+)/).forEach(function (chunk) {
-          if (chunk) parts.push({ text: chunk, em: isEm });
-        });
-      });
-      audience.setAttribute("aria-label", label);
-      audience.textContent = "";
-      parts.forEach(function (part) {
-        if (/^\s+$/.test(part.text)) { audience.appendChild(document.createTextNode(" ")); return; }
-        var span = document.createElement(part.em ? "em" : "span");
-        span.className = "scrub-word";
-        span.setAttribute("aria-hidden", "true");
-        span.textContent = part.text;
-        audience.appendChild(span);
-        words.push(span);
-      });
-    }
-
     // La línea que une los pasos se va llenando a medida que bajás.
     var stepsList = document.querySelector("[data-steps]");
-
-    // 3) El celular del inicio se mueve más lento que la página (parallax suave).
-    var visual = document.querySelector(".hero__visual");
 
     var scrollTicking = false;
     var onMotionScroll = function () {
       var vh = window.innerHeight;
-      if (visual) {
-        var y = Math.min(window.scrollY, vh * 1.2);
-        visual.style.transform = "translate3d(0," + (y * -0.12).toFixed(1) + "px,0)";
-      }
-      if (audience && words.length) {
-        var r = audience.getBoundingClientRect();
-        var progress = (vh * 0.9 - r.top) / (vh * 0.55 + r.height);
-        progress = Math.max(0, Math.min(1, progress));
-        var lit = Math.round(progress * words.length);
-        for (var k = 0; k < words.length; k++) words[k].classList.toggle("is-lit", k < lit);
-      }
       if (stepsList) {
         var sr = stepsList.getBoundingClientRect();
-        var sp = (vh * 0.6 - sr.top) / sr.height;
+        var sp = (vh * 0.75 - sr.top) / (sr.height + vh * 0.25);
         stepsList.style.setProperty("--progress", Math.max(0, Math.min(1, sp)).toFixed(3));
       }
       scrollTicking = false;

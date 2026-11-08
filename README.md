@@ -10,14 +10,21 @@ Landing page de captación de clientes para servicios de desarrollo web orientad
 
 ```
 /
-├── index.html          Landing (hero, cómo trabajo, formulario)
-├── styles.css          Estilos (variables CSS de la paleta)
-├── script.js           Scroll suave, validación y envío del formulario
-├── gracias/
-│   └── index.html      Página de confirmación (noindex)
+├── index.html                      Landing: inicio, servicios, ejemplos, beneficios,
+│                                   proceso, formas de pago, preguntas, formulario y contacto
+├── styles.css                      Estilos (variables de paleta, tipografía y espaciado al inicio)
+├── script.js                       Barra, menú, ventanita de contacto, animaciones y formulario por pasos
+├── gracias/index.html              Confirmación después de enviar el formulario
+├── og.jpg                          Imagen para compartir el link (1200×630)
+├── googlea002c58dd59a9056.html     Verificación de Google Search Console (no borrar)
 ├── .gitignore
 └── README.md
 ```
+
+Los "Ejemplos de diseño" son conceptos dibujados con HTML y CSS (no son clientes reales).
+Cuando tengas proyectos propios, reemplazalos o sumalos en la sección `#ejemplos` de `index.html`.
+
+Las respuestas de "Preguntas frecuentes" son generales: editalas en la sección `#preguntas`.
 
 ## Probar en local
 
