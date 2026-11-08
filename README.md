@@ -1,4 +1,4 @@
-# Laguna De Webs · Páginas web en Lobos y alrededores
+# Laguna de Webs · Páginas web en Lobos y alrededores
 
 Landing page de captación de clientes para servicios de desarrollo web orientados a negocios locales (restaurantes, bares, panaderías, quintas de eventos, comercios y profesionales).
 

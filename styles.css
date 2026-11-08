@@ -1421,7 +1421,7 @@ fieldset.has-error .choice__box { border-color: var(--error); }
 @keyframes rise-visible { from { transform: translateY(18px); } to { transform: none; } }
 
 /* =========================================================
-   Marca: Laguna De Webs
+   Marca: Laguna de Webs
    ========================================================= */
 .brand {
   display: inline-flex;
